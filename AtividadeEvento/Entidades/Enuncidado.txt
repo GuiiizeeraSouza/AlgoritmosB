@@ -1,0 +1,20 @@
+MENU 
+
+    1- Inscrição do evento
+        matricula;
+        nome;
+        email;
+                    lista/vetor struct Port.
+                    arquivo inscritos.csv
+
+    2- Registro de entrada  
+        lista/vetor - matricula
+        arquivo - entradas.csv
+                    matricula; hora
+    
+    3- Registro de saida
+        lista/vetor - matricula
+        arquivo - saidas.csv
+                    matricula; hora
+
+    4- Sair
