@@ -7,7 +7,6 @@
 using namespace std;
 
 #include "./Entidades/struct.h"
-#include "./util.h/util.h"
 #include "metodos.h"
 
 int main() {
