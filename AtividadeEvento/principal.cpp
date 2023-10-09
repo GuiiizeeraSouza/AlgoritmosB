@@ -11,6 +11,10 @@ using namespace std;
 int main() {
     Participante vetor[TAM];
     int totalInscritos = conectarBase(vetor,TAM);
-    menu(vetor, TAM, totalInscritos);   
+
+    Entrada vetor1[TAM];
+    int totalEntradas = conectarBaseEntrada(vetor1,TAM);
+
+    menu(vetor, vetor1, TAM, totalInscritos, totalEntradas);   
     return 1;
 }

@@ -72,6 +72,91 @@ void adicionarInscritoArquivo(string matricula, string nome, string email)
     procuradorArquivo.close();
 }
 
+int conectarBaseEntrada(Entrada vetor1[], int n)
+{
+    ifstream procuradorArquivo; // tipo de arquivo para leitura
+    int totalEntradas = 0;
+
+    for (int i = 0; i < n; i++)
+    {
+        vetor1[i].matricula = "";
+        vetor1[i].data = "";
+        vetor1[i].hora = "";
+    }
+    procuradorArquivo.open("entradas.csv");
+
+    if (!procuradorArquivo)
+    {
+        return totalEntradas;
+    }
+
+    // le o arquivo capturando as frases
+    string linha;
+    while (!procuradorArquivo.eof())
+    {
+        getline(procuradorArquivo, linha); // lendo a linha inteira
+        string vetor_linha[3];
+        split(vetor_linha, linha, ";");
+
+        vetor1[totalEntradas].matricula = vetor_linha[0];
+        vetor1[totalEntradas].data = vetor_linha[1];
+        vetor1[totalEntradas].hora = vetor_linha[2];
+        totalEntradas++;
+    }
+
+    procuradorArquivo.close();
+    return totalEntradas;
+}
+
+bool jaInscritoEntrada(string matricula, Entrada vetor1[], int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        if (vetor1[i].matricula == matricula)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool confirmacaoDeCadastro(string matricula, Participante vetor[], int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        if (vetor[i].matricula == matricula)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void adicionarEntradaVetor(Entrada vetor1[], int n, string matricula, string hora, string data)
+{
+    for (int i = 0; i < n; i++)
+    {
+        if (vetor1[i].matricula == "")
+        {
+            vetor1[i].matricula = matricula;
+            vetor1[i].hora = hora;
+            vetor1[i].data = data;
+            break;
+        }
+    }
+}
+
+void adicionarEntradaArquivo(string matricula, string hora, string data)
+{
+    ofstream procuradorArquivo;
+    procuradorArquivo.open("entrada.csv", ios::out | ios::app);
+    procuradorArquivo << "Matricula: " << matricula << ";"
+                      << "Hora: " << hora << ";"
+                      << "Data: " << data << "\n";
+
+    procuradorArquivo.close();
+}
+
 int inscricao(Participante vetor[], int n, int totalInscritos)
 {
     cout << "INSCRICAO\n";
@@ -107,7 +192,47 @@ int inscricao(Participante vetor[], int n, int totalInscritos)
     return ++totalInscritos;
 }
 
-void menu(Participante vetor[], int n, int totalInscritos)
+int entrada(Entrada vetor1[], Participante vetor[], int n, int totalEntradas, int totalInscrito)
+{
+    cout << "Entrada\n";
+    string matricula;
+    string hora;
+    string data;
+
+    if (TAM == totalEntradas)
+    {
+        cout << "Evento lotado\n";
+        return totalEntradas;
+    }
+    cout << "Informe matricula: ";
+    cin >> matricula;
+    fflush(stdin);
+    if (jaInscritoEntrada(matricula, vetor1, n))
+    {
+        cout << "Esta matricula ja inscrita no evento\n";
+        return totalEntradas;
+    }
+    if (confirmacaoDeCadastro(matricula, vetor, n))
+    {
+        cout << "Hora de entrada: ";
+        getline(cin, hora);
+        fflush(stdin);
+
+        cout << "Data: ";
+        cin >> data;
+        fflush(stdin);
+        adicionarEntradaVetor(vetor1, n, matricula, data, hora);
+        adicionarEntradaArquivo(matricula, data, hora);
+
+        return ++totalEntradas;
+    }else {
+        cout << "Matricula não cadastrada no evento!";
+
+        return totalEntradas;
+    }
+}
+
+void menu(Participante vetor[], Entrada vetor1[], int n, int totalInscritos, int totalEntradas)
 {
     int opcao;
     do
@@ -132,6 +257,7 @@ void menu(Participante vetor[], int n, int totalInscritos)
             break;
         case 3:
             cout << "Registrar entrada\n";
+            totalEntradas = entrada(vetor1, vetor, n, totalEntradas, totalInscritos);
             break;
         case 4:
             cout << "Registrar saida\n";
